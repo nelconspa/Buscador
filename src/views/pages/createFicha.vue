@@ -1,6 +1,15 @@
 <script>
+    import MultiSelectInput from '../../components/MultiSelectInput';
+    import TagInput from '../../components/TagInput'; 
+    import TextInput from '../../components/TextInput'; 
+
     export default {
         name: 'createFicha',
+        components: {
+            MultiSelectInput,
+            TagInput,
+            TextInput
+        },
         data() {
             return {
                 template: this.$store.state.template.parameters
@@ -17,20 +26,31 @@
         <CCardHeader>Nuevo Template</CCardHeader>
         <CCardBody>
             <CCardTitle>Ingreso de datos de template</CCardTitle>
-            <CCardText>With supporting text below as a natural lead-in to additional content.</CCardText>
-            <CForm>
+            <!-- <CCardText>With supporting text below as a natural lead-in to additional content.</CCardText> -->
+            <CForm class="mt-4">
                 <div v-for="parameter in template" :key="parameter.id" class="mb-3">
-                    <CFormLabel for="inputPassword5">{{ parameter.nombre }}</CFormLabel>
-                    <CFormInput type="text" id="inputPassword5" />
-                    <!-- <CFormText id="passwordHelpBlock">
-                    Your password must be 8-20 characters long, contain letters and numbers, and must not
-                    contain spaces, special characters, or emoji.
-                    </CFormText> -->
+                    <div v-if="parameter.tipoparametro_id === 1">
+                        <TextInput 
+                            :parameter="parameter"
+                        /> 
+                    </div>
+                    <div v-else-if="parameter.tipoparametro_id === 2 && parameter.tipodato_id === null">
+                        <TagInput 
+                            :parameter="parameter"
+                        />
+                    </div>
+                    <div v-else-if="parameter.tipoparametro_id === 2 && parameter.tipodato_id !== null">
+                        <MultiSelectInput 
+                            :parameter="parameter"
+                        />
+                    </div>
+                    
                 </div>
             </CForm>
 
             
-            <CButton href="#">Go somewhere</CButton>
+            <CButton color="dark">Guardar</CButton>
         </CCardBody>
     </CCard>
 </template>
+

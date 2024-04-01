@@ -62,7 +62,7 @@
                             class="custom-button"
                             @click="createFicha"
                         >
-                            Crear Ficha
+                            Crear Template
                         </CButton>
                     </CCardTitle>
                     <!-- <div class="d-flex justify-content-end">
@@ -113,10 +113,16 @@
     </CRow>
     
     <AddParameterModal 
-        :showModal="showModal"
+        :showModal="showAddParameterModal"
         @closeAddParameterModal="onCloseAdd"
     />
     
+    <AddTemplateModal 
+        :showModal="showAddTemplateModal"
+        :selectedParameters="selectedParameters"
+        @closeAddTemplateModal="onCloseAddTemplate"
+        
+    />
     
 
   
@@ -128,7 +134,8 @@
     import { CIcon } from '@coreui/icons-vue';
     import * as icon from '@coreui/icons';
     import SearchBarFilter from '../../components/SearchBarFilter.vue';
-    import AddParameterModal from '../../components/AddParameterModal.vue'
+    import AddParameterModal from '../../components/AddParameterModal.vue';
+    import AddTemplateModal from '../../components/AddTemplateModal.vue'; 
     import { reactive } from 'vue';
     import { VueDraggable } from 'vue-draggable-plus';
 
@@ -138,18 +145,20 @@
             CIcon,
             SearchBarFilter,
             AddParameterModal,
+            AddTemplateModal,
             VueDraggable
         },
         data() {
             return {
                 param: null,
                 parameters: [],
-                selectedParameters: [],
+                selectedParameters: [], // objeto de parametros seleccionados completo (para mostrar info?)
                 addButtons: reactive({}),
                 fail: false,
                 failMsg: '',
                 searchFilter: '',
-                showModal: false,
+                showAddTemplateModal: false,
+                showAddParameterModal: false,
             }
         },
         setup() {
@@ -177,15 +186,26 @@
             
         },
         methods: {
+            setPriorityParameters(parameters) {
+                parameters.forEach((parameter, index) => {
+                    parameter['prioridad'] = index + 1; 
+                })
+
+                return parameters; 
+                
+            },
             createFicha() {
                 /* se guardan los parámetros de forma global con vuex 
                     es posible acceder a ellos desde distintas vistas.
                 */ 
-                this.$store.commit("createTemplate", this.selectedParameters); 
-                this.$router.push({ path: '/crear-ficha' }); 
+                this.selectedParameters = this.setPriorityParameters(this.selectedParameters);  
+                this.showAddTemplateModal = true; 
+                
+                //this.$store.commit("createTemplate", this.selectedParameters); 
+                //this.$router.push({ path: '/crear-ficha' }); 
             },
             createParameter() {
-                this.showModal = true; 
+                this.showAddParameterModal = true; 
             },
             handleSearch(search) {
                 this.searchFilter = search; 
@@ -227,8 +247,12 @@
                 }
             },
             onCloseAdd() {
-                this.showModal = false; 
+                this.showAddParameterModal = false; 
                 this.getParameters();
+            },
+            onCloseAddTemplate() {
+                this.showAddTemplateModal = false; 
+                
             }
         }
 

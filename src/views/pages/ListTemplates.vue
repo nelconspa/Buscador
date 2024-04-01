@@ -25,6 +25,16 @@
                 return formatedDate; 
                 
             },
+            useTemplate(template) {
+                let selectedParameters = template.parametro;
+                console.log(selectedParameters); 
+                this.$store.commit("createTemplate", selectedParameters); 
+                this.$router.push({ path: '/crear-ficha' });
+            },
+
+            editTemplate() {
+
+            },
             async getTemplates() {
                 try {
                     const response = await axios.get(
@@ -61,10 +71,10 @@
                         <CListGroupItem>Código: {{ template.codigo }}</CListGroupItem>
                         <CListGroupItem>Estado: {{  getStateStr(template.estado) }}</CListGroupItem>
                     </CListGroup>
-                    <CButton href="#" color="dark" class="mx-1">Usar</CButton>
-                    <CButton href="#" color="primary" class="mx-1">Editar</CButton>
+                    <CButton color="dark" class="mx-1" @click="useTemplate(template)">Usar</CButton>
+                    <CButton color="primary" class="mx-1" @click="editTemplate(template)">Editar</CButton>
                 </CCardBody>
-                <CCardFooter class="text-body-secondary">Fecha de ingreso: <b>{{ shortDateFormat(template.fecha_ingreso) }}</b></CCardFooter>
+                <CCardFooter class="text-body-secondary">Fecha de ingreso: <span class="badge bg-secondary">{{ shortDateFormat(template.fecha_ingreso) }}</span></CCardFooter>
             </CCard>
         </CContainer>
         </CCol>
